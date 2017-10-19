@@ -1,0 +1,188 @@
+{% extends 'admin.html' %} {% block main %}
+<!-- MAIN CONTENT -->
+<div class="panel">
+	<div class="panel-heading">
+		<h3 class="panel-title">标签管理</h3>
+	</div>
+	<button class="btn btn-default" id="create" style="position: absolute;right: 2em;margin-top: -3em;">新建标签</button>	
+	<div class="panel-body">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th style="min-width: 120px;">名称</th>
+					<th style="min-width: 120px;">
+						<select name="" id="category">
+							<option value="">全部分类</option>
+							{% for item in category %}
+								{% if item.parent == currentCategory %}
+									<option value="{{item.parent}}" selected>{{item.parent}}</option>
+								{% else %}
+									<option value="{{item.parent}}">{{item.parent}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</th>
+					<th style="min-width: 120px;">描述</th>
+					<th style="min-width: 120px;">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in tags %}
+				<tr>
+					<td style="min-width: 120px;">{{item.name}}</td>
+					<td style="min-width: 120px;">{{item.parent}}</td>
+					<td style="min-width: 120px; text-align: justify;"><pre style="width:100%">{{item.describe}}</pre></td>
+					<td style="min-width: 120px;">
+						<a class="edit" data-id="{{item.id}}" href="javascript:void(0);">编辑</a>
+						<a class="delete" data-id="{{item.id}}" href="javascript:void(0);">删除</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<!-- PAGE -->
+	<div class="jogger">
+		{% if currentpage == pages[0].page %}
+			<span class="disabled"> &gt; </span>
+		{% else %}
+			<a href="/admin/tag?page={{currentpage|int +1}}&category={{currentCategory}}"> &lt; </a>
+		{% endif %}
+
+		{% for item in pages %}
+			{% if item.page=='···' %}
+				<a href="javascript:void(0);">{{item.page}}</a>
+			{% elseif item.active %}
+				<span class="current">{{item.page}}</span>
+			{% else %}
+				<a href="/admin/tag?page={{item.page}}&category={{currentCategory}}">{{item.page}}</a>
+			{% endif %}
+		{% endfor %}
+
+		{% if currentpage == pages[pages.length-1].page %}
+			<span class="disabled"> &gt; </span>
+		{% else %}
+			<a href="/admin/tag?page={{currentpage|int +1}}&category={{currentCategory}}"> &gt; </a>
+		{% endif %}
+	</div>
+</div>
+
+<script>
+	$(function(){
+		var id,type;
+
+		var openMenuDiv =function(obj){
+			if(!obj){
+				var obj = {
+					name: '',
+					parent: '',
+					describe: ''
+				}
+			}
+
+			layer.open({
+				title: '添加菜单',
+				type: 1,
+				area: '400px',
+				content: `<form class="newMenu" style="width:400px;padding:20px;">
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.name}" placeholder="标签名称" type="text" class="form-control" name="menuName"></div>
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.parent}" placeholder="所属分类" type="text" class="form-control" name="menuParent"></div>
+							<div class="gorm-group" style="margin:10px 0;"><textarea class="form-control">${obj.describe}</textarea></div>
+							<div class="gorm-group" style="margin:10px 0;"><button type="submit" class="form-control btn btn-default">确定</button></div>
+						</form>`
+			});
+		}
+
+		$('#create').on('click', function(){
+			type = 1;
+			id = null;
+			openMenuDiv();
+		});
+
+		$(document).on('click','.newMenu .btn', function(){
+			$('.newMenu').validate({
+				submitHandler: function(){
+					var postObj = {
+						type: type,
+						id: id,
+						menuName: $('input[name=menuName]').val(),
+						menuParent: $('input[name=menuParent]').val(),
+						describe: $('textarea').html()
+					}
+					$.post('/api/admin/tag', postObj, function(res){
+						layer.closeAll();
+						if(res.status){
+							location.reload();
+							layer.msg(res.msg);
+						}else{
+							if(res.code == 403){
+								layer.alert(res.msg, function(){
+									location.href = '/admin/sign.html';
+								})
+							}else{
+								layer.msg(res.msg)
+							}
+						}
+					});
+				},
+				rules: {
+					menuName: 'required',
+					menuParent: 'required'
+				},
+				messages: {
+					menuName: '标签名称不能为空',
+					menuParent: '所属分类不能为空'
+				},
+				onfocusout: false,
+				onkeyup: false,
+				onclick: false,
+				showErrors: function(errorMap,errorList){
+					if(errorList.length){
+						layer.tips(errorList[0].message,errorList[0].element);
+					}
+				}
+			});
+		});
+
+		$('.edit').on('click', function(){
+			type = 2;
+			id = $(this).attr('data-id');
+			var obj = {
+				name: $(this).parent().parent().find('td').eq(0).text() || '',
+				parent: $(this).parent().parent().find('td').eq(1).text() || '',
+				describe: $(this).parent().parent().find('td').eq(2).text() || ''
+			}
+			openMenuDiv(obj);
+		});
+
+		$('.delete').on('click', function(){
+			type = 3;
+			var id = $(this).attr('data-id');
+			var postObj = {
+				id: id,
+				type: type
+			}
+			$.post('/api/admin/tag',postObj,function(res){
+				if(!res.status){
+					if(res.code == 403){
+						layer.alert(res.msg, function(){
+							location.href = '/admin/sign.html';
+						})
+					}else{
+						layer.msg(res.msg)
+					}
+				}else{
+					layer.msg(res.msg, function(){
+						location.reload();
+					})
+				}
+			})
+		})
+
+		$('#category').on('change', function(){
+			location.href = '/admin/tag?page=1&category=' + $(this).val();
+		});
+	})
+</script>
+<!-- END MAIN CONTENT -->
+{% endblock %}

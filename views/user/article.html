@@ -1,0 +1,390 @@
+{% extends 'user.html' %} {% block main %}
+        <script src="/static/wangEditor/wangEditor.min.js"></script>
+        <!-- Start of Page Container -->
+        <div class="page-container">
+                <div class="container">
+                        <div class="row">
+                        <!-- start of page content -->
+                        <div class="span8 page-content">
+
+                                <ul class="breadcrumb">
+                                        <li><a href="/category/{{article.category}}" title="{{article.category}}">{{article.category}}</a><span class="divider">/</span></li>
+                                        <li><a href="/category/{{article.category}}/{{article.tags}}" title="/category/{{article.category}}/{{article.tags}}">{{article.tags}}</a> <span class="divider">/</span></li>
+                                        <li class="active">{{article.title}}</li>
+                                </ul>
+                                <article class=" type-post format-standard hentry clearfix">
+                                        <h1 class="post-title"><a href="javascript:void(0);">{{article.title}}</a></h1>
+                                        <div class="post-meta clearfix">
+                                                <span class="date">{{article.createdAt|timeFormat}}</span>
+                                                <span class="category"><a href="/category/{{article.category}}/{{article.tags}}" title="{{article.tags}}">{{article.tags}}</a></span>
+                                                <span class="comments"><a href="javascript:void(0);">{{article.comment}} Comments</a></span>
+                                                <span class="like-count">{{article.like}}</span>
+                                        </div><!-- end of post meta -->
+                                        {{article.content|safe}} 
+                                </article>
+                                <div class="like-btn">
+                                        <!--异步 点赞-->
+                                        <form id="like-it-form" method="post">
+                                                <span class="like-it zan">{{article.like}}</span>
+                                        </form>
+                                        <span class="tags">
+                                                {{article.tag}}
+                                                <!--<strong>Tags:&nbsp;&nbsp;</strong><a href="#" rel="tag">basic</a>, <a href="#" rel="tag">setting</a>, <a href="http://knowledgebase.inspirythemes.com/tag/website/" rel="tag">website</a>-->
+                                        </span>
+
+                                </div>
+
+                                <section id="comments">
+
+                                        <h3 id="comments-title">({{article.comment}}) Comments</h3>
+
+                                        <ol class="commentlist">
+                                                {% for item in comments %}
+                                                        <li class="comment even thread-odd thread-alt depth-1">
+                                                                <article>
+                                                                        <a title="{{item.nickname or item.email}}" href="/user/{{item.commentUID}}">
+                                                                                <img alt="" src="{{item.commentHead or '/static/user/images/defaultHead.png'}}" class="avatar avatar-60 photo" height="60" width="60">
+                                                                        </a>
+                                                                        <div class="comment-meta">
+                                                                                <h5 class="author">
+                                                                                        <cite class="fn"><a href="/user/{{item.commentUID}}" rel="external nofollow" class="url">{{item.nickname or item.email}}</a></cite>
+                                                                                        <!--<a class="comment-reply-link" href="#">Reply</a>-->
+                                                                                </h5>
+
+                                                                                <p class="date">
+                                                                                        <a href="javascript:void(0);">
+                                                                                                <time>{{item.createdAt|timeFormat}}</time>
+                                                                                        </a>
+                                                                                </p>
+
+                                                                        </div>
+                                                                        <div class="comment-body">
+                                                                                {{item.comments|safe}}
+                                                                        </div>
+                                                                        <a class="Reply comment-reply-link" href="javascript:void(0);" data-id="{{item.id}}" data-uid="{{item.commentUID}}" data-uname="{{item.nickname or item.email}}">回复</a>
+                                                                </article>
+                                                                {% if item.children.length %}
+                                                                        <ul class="children">
+                                                                                {% for it in item.children %}
+                                                                                <li class="comment byuser comment-author-saqib-sarwar bypostauthor odd alt depth-2" id="li-comment-3">
+                                                                                        <article id="comment-3">
+                                                                                                <a href="/user/{{it.commentUID}}">
+                                                                                                        <img alt="" src="{{it.commentHead or '/static/user/images/defaultHead.png'}}" class="avatar avatar-60 photo" height="60" width="60">
+                                                                                                </a>
+                                                                                                <div class="comment-meta">
+                                                                                                        <h5 class="author">
+                                                                                                                <a class="fn" href="/user/{{it.commentUID}}">{{it.commentNick or it.commentEmail}}</a>
+                                                                                                                <cite class="comment-reply-link" href="javascript:void(0);">回复</cite>
+                                                                                                                <a class="fn" href="/user/{{it.beCommentUID}}">{{it.beCommentNick or it.beCommentEmail}}</a>
+                                                                                                        </h5>
+                                                                                                        <p class="date">
+                                                                                                                <a href="javascript:void(0);">
+                                                                                                                        <time datetime="2013-02-26T13:20:14+00:00">{{it.createdAt|timeFormat}}</time>
+                                                                                                                </a>
+                                                                                                        </p>
+                                                                                                </div>
+                                                                                                <div class="comment-body">
+                                                                                                        <p>{{it.comments|safe}}</p>
+                                                                                                </div>
+                                                                                                <a class="childReply comment-reply-link" href="javascript:void(0);" data-id="{{item.id}}" data-uid="{{it.commentUID}}" data-uname="{{it.commentNick or it.commentEmail}}" data-child="true">回复</a>
+                                                                                        </article>
+                                                                                </li>
+                                                                                {% endfor %}
+                                                                        </ul>
+                                                                {% endif %}
+                                                                <form action="" style="display:none;">
+                                                                        回复<span class="replyTo"></span>
+                                                                        <input type="text" placeholder="输入回复内容">
+                                                                        <button type="button" class="replyBtn">确定</button>
+                                                                </form>
+                                                        </li>
+                                                {% endfor %}
+
+                                        </ol>
+
+                                        <div id="respond">
+                                                <h3>Have a comments?</h3>
+                                                <div id="editor">
+                                                        <p>输入您的评论。。。</p>
+                                                </div>
+                                                <button id="pushComment" type="button">评论</button>
+                                        </div>
+
+                                </section><!-- end of comments -->
+
+                        </div>
+                        <!-- end of page content -->
+
+
+                        <!-- start of sidebar -->
+                        <aside class="span4 page-sidebar">
+
+                                <section class="widget">
+                                        <div class="support-widget">
+                                                <h3 class="title">Support</h3>
+                                                <p class="intro">Need more support? If you did not found an answer, contact us for further help.</p>
+                                        </div>
+                                </section>
+
+
+                                <section class="widget">
+                                        <h3 class="title">Featured Articles</h3>
+                                        <ul class="articles">
+                                                <li class="article-entry standard">
+                                                        <h4><a href="single.html">Integrating WordPress with Your Website</a></h4>
+                                                        <span class="article-meta">25 Feb, 2013 in <a href="#" title="View all posts in Server &amp; Database">Server &amp; Database</a></span>
+                                                        <span class="like-count">66</span>
+                                                </li>
+                                                <li class="article-entry standard">
+                                                        <h4><a href="single.html">WordPress Site Maintenance</a></h4>
+                                                        <span class="article-meta">24 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                        <span class="like-count">15</span>
+                                                </li>
+                                                <li class="article-entry video">
+                                                        <h4><a href="single.html">Meta Tags in WordPress</a></h4>
+                                                        <span class="article-meta">23 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                        <span class="like-count">8</span>
+                                                </li>
+                                                <li class="article-entry image">
+                                                        <h4><a href="single.html">WordPress in Your Language</a></h4>
+                                                        <span class="article-meta">22 Feb, 2013 in <a href="#" title="View all posts in Advanced Techniques">Advanced Techniques</a></span>
+                                                        <span class="like-count">6</span>
+                                                </li>
+                                        </ul>
+                                </section>
+
+
+
+                                <section class="widget"><h3 class="title">Categories</h3>
+                                        <ul>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">Advanced Techniques</a> </li>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">Designing in WordPress</a></li>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">Server &amp; Database</a></li>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet, ">Theme Development</a></li>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">Website Dev</a></li>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet,">WordPress for Beginners</a></li>
+                                                <li><a href="#" title="Lorem ipsum dolor sit amet, ">WordPress Plugins</a></li>
+                                        </ul>
+                                </section>
+
+                                <section class="widget">
+                                        <h3 class="title">Recent Comments</h3>
+                                        <ul id="recentcomments">
+                                                <li class="recentcomments"><a href="#" rel="external nofollow" class="url">John Doe</a> on <a href="#">Integrating WordPress with Your Website</a></li>
+                                                <li class="recentcomments">saqib sarwar on <a href="#">Integrating WordPress with Your Website</a></li>
+                                                <li class="recentcomments"><a href="#" rel="external nofollow" class="url">John Doe</a> on <a href="#">Integrating WordPress with Your Website</a></li>
+                                                <li class="recentcomments"><a href="#" rel="external nofollow" class="url">Mr WordPress</a> on <a href="#">Installing WordPress</a></li>
+                                        </ul>
+                                </section>
+
+                        </aside>
+                        <!-- end of sidebar -->
+                        </div>
+                </div>
+        </div>
+        <script>
+                var articleId = {{article.id}};
+                $(function(){
+                        var E = window.wangEditor
+                        var editor = new E('#editor');
+
+                        // 配置服务器端地址
+                        editor.customConfig.uploadImgServer = '/api/upload';
+                        // 将图片大小限制为 3M
+                        editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+                        // 将 timeout 时间改为 30s
+                        editor.customConfig.uploadImgTimeout = 30000;
+                        // 上传图片时刻自定义设置 header
+                        // editor.customConfig.uploadImgHeaders = {
+                        //     'Accept': 'text/x-json'
+                        // }
+                        // 自定义 fileName
+                        editor.customConfig.uploadFileName = 'files';
+                        // 可使用监听函数在上传图片的不同阶段做相应处理
+                        editor.customConfig.uploadImgHooks = {
+                                before: function (xhr, editor, files) {
+                                layer.load(1, {
+                                        shade: [0.3,'#fff']
+                                });
+                                },
+                                success: function (xhr, editor, result) {
+                                layer.closeAll();
+                                // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+                                // result.data.forEach(function(item) {
+                                //     editor.txt.append('<p><img src="' + item + '" /></p>');
+                                // });
+                                },
+                                fail: function (xhr, editor, result) {
+                                layer.closeAll();
+                                // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+                                layer.alert('图片上传出错！');
+                                },
+                                error: function (xhr, editor) {
+                                layer.closeAll();
+                                // 图片上传出错时触发
+                                layer.alert('图片上传出错！');
+                                },
+                                timeout: function (xhr, editor) {
+                                layer.closeAll();
+                                // 图片上传超时时触发
+                                layer.alert('图片上传超时！');
+                                }
+                        }
+
+                        editor.create()
+
+                        $('#pushComment').on('click', function(){
+                                if(editor.txt.text()==''||editor.txt.text()=='输入您的评论。。。'){
+                                        layer.msg('内容不能为空');
+                                        return;    
+                                }
+
+                                var postObj = {
+                                        articleId: articleId,
+                                        content: editor.txt.html()
+                                }
+
+                                $.ajax({
+                                        url: '/api/commentArticle',
+                                        type: 'POST',
+                                        data: postObj,
+                                        dataType: 'json',
+                                        beforeSend: function(){
+                                                layer.load(1,{
+                                                shade: [0.1,'#fff']
+                                                });
+                                        },
+                                        success: function(res){
+                                                layer.closeAll();
+                                                if(res.status){
+                                                        layer.msg('评论成功', {time: 2000},function(){
+                                                                // location.href = '/article/' + res.articleId;
+                                                                location.reload();
+                                                        })
+                                                }else{
+                                                        layer.alert(res.msg);
+                                                }
+                                        }
+                                })
+                        });
+
+                        // 显示评论输入框
+                        var showReply = function(form, _self){
+                                if(form.attr('data-uid') == _self.attr('data-uid')){
+                                        form.hide();
+                                        return;
+                                }
+
+                                if(_self.attr('data-child')){
+                                        form.css('paddingLeft', '70px');
+                                }else{
+                                        form.css('paddingLeft', '0px');    
+                                }
+
+                                var replyTo = form.find('.replyTo');
+                                replyTo.text(_self.attr('data-uname'));
+                                form.attr('data-uid',_self.attr('data-uid'));
+                                form.attr('data-id',_self.attr('data-id'));
+                                form.show();   
+                        }
+                        // 直接评论输入框
+                        $('.Reply').on('click', function(){
+                                var form = $(this).parent().siblings('form');
+                                showReply(form, $(this));
+                        });
+                        // 子级评论输入框
+                        $('.childReply').on('click', function(){
+                                var form = $(this).parent().parent().parent().siblings('form');
+                                showReply(form, $(this));
+                        });
+
+                        // 评论成功后插入的字符串
+                        var appendStr = function(res){
+                                var t = new Date(res.data.createdAt);
+                                var time = t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate() + '&nbsp;' + t.getHours() + ':' + t.getMinutes();
+                                return `<li class="comment byuser comment-author-saqib-sarwar bypostauthor odd alt depth-2" id="li-comment-3">
+                                                <article id="comment-3">
+                                                        <a href="/user/${res.data.id}">
+                                                                <img alt="" src="${res.data.headUrl||'/static/user/images/defaultHead.png'}" class="avatar avatar-60 photo" height="60" width="60">
+                                                        </a>
+                                                        <div class="comment-meta">
+                                                                <h5 class="author">
+                                                                        <a class="fn" href="/user/${res.data.id}">${res.data.commentNick||res.data.commentEmail}</a>
+                                                                        <cite class="comment-reply-link" href="javascript:void(0);">回复</cite>
+                                                                        <a class="fn" href="/user/${res.data.beCommentUID}">${res.data.beCommentNick}</a>
+                                                                </h5>
+                                                                <p class="date">
+                                                                        <a href="javascript:void(0);">
+                                                                                <time>${time}</time>
+                                                                        </a>
+                                                                </p>
+                                                        </div>
+                                                        <div class="comment-body">
+                                                                <p>${res.data.comments}</p>
+                                                        </div>
+                                                        <a class="childReply comment-reply-link" href="javascript:void(0);" data-id="${res.data.parentId}" data-uid="${res.data.id}" data-uname="${res.data.commentNick||res.data.commentEmail}" data-child="true">回复</a>
+                                                </article>
+                                        </li>`;
+                        }
+
+                        // 回复评论 
+                        $('.replyBtn').on('click', function(){
+                                var form = $(this).parent();
+                                var input = form.find('input');
+                                if(input.val()==''){
+                                        layer.tips('回复内容不能为空', input);
+                                        return;
+                                }
+                                var postObj = {
+                                        articleId: articleId,
+                                        comments: input.val(),
+                                        parentId: form.attr('data-id'),
+                                        beCommentUID: form.attr('data-uid'),
+                                        beCommentNick: form.find('.replyTo').text()
+                                }
+                                $.ajax({
+                                       url: '/api/replyComment',
+                                       type: 'post',
+                                       data: postObj,
+                                       dataType: 'json',
+                                       beforeSend: function(){
+                                                layer.load(1,{
+                                                        shade: [0.1,'#fff']
+                                                });
+                                       },
+                                       success:function(result){
+                                                layer.closeAll();
+                                                if(result.status){
+                                                        layer.msg(result.msg);
+                                                        var str = appendStr(result);
+                                                        if(form.siblings('ul')){
+                                                                form.siblings('ul').append(str);
+                                                        }else{
+                                                                form.siblings('article').after('<ul class="children"></ul>');
+                                                                form.siblings('ul').append(str);
+                                                        }
+                                                        form.find('input').val('');
+                                                        form.hide();
+                                                }else{
+                                                        layer.msg(result.msg);
+                                                }
+                                       }
+                                });
+
+                                
+                        });
+
+                        // 点赞、取消点赞
+                        $('.zan').on('click', function(){
+                                
+
+
+
+
+
+
+                        })
+                })
+        </script>
+        <!-- End of Page Container -->
+{% endblock %}

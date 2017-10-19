@@ -1,0 +1,122 @@
+{% extends "user.html" %} {% block main %}
+<!-- Start of Search Wrapper -->
+<div class="search-area-wrapper">
+    <div class="search-area container">
+        <h3 class="search-header">Have a Question?</h3>
+        <p class="search-tag-line">If you have any question you can ask below or enter what you are looking for!</p>
+        <form id="search-form" class="search-form clearfix" method="get" action="#" autocomplete="off">
+            <input class="search-term required" type="text" id="s" name="s" placeholder="Type your search terms here" title="* Please enter a search term!" />
+            <input class="search-btn" type="submit" value="Search" />
+            <div id="search-error-container"></div>
+        </form>
+    </div>
+</div>
+<!-- End of Search Wrapper -->
+<!-- Start of Page Container -->
+<div class="page-container">
+    <div class="container">
+        <div class="row">
+            <!-- start of page content -->
+            <div class="span8 page-content">
+                <!-- Basic Home Page Template -->
+                <div class="row separator">
+                    <section class="span4 articles-list">
+                        <h3>本周最热</h3>
+                        <ul class="articles">
+                            {% for article in hotArticles %}
+                                <li class="article-entry standard">
+                                    <h4><a href="/article/{{article.id}}">{{article.title}}</a></h4>
+                                    <p class="article-meta">
+                                        {{article.createdAt|timeFormat}} in <a href="/{{article.category}}">{{article.category}}</a>
+                                        <span class="float-r marginLeft5"><i class="icon-thumbs-up"></i>{{article.like}}</span>
+                                        <span class="float-r marginLeft5"><i class="icon-comment"></i>{{article.comment}}</span>
+                                    </p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                    <section class="span4 articles-list">
+                        <h3>最新问题</h3>
+                        <ul class="articles">
+                            {% for article in newArticles %}
+                                <li class="article-entry standard">
+                                    <h4><a href="/article/{{article.id}}">{{article.title}}</a></h4>
+                                    <p class="article-meta">
+                                        {{article.createdAt|timeFormat}} in <a href="/{{article.category}}">{{article.category}}</a>
+                                        <span class="float-r marginLeft5"><i class="icon-thumbs-up"></i>{{article.like}}</span>
+                                        <span class="float-r marginLeft5"><i class="icon-comment"></i>{{article.comment}}</span>
+                                    </p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                </div>
+                <div class="row home-category-list-area">
+                    <div class="span8">
+                        <h2>主题分类</h2>
+                    </div>
+                </div>
+                {% for item in category %}
+                    <div class="row-fluid top-cats">
+                        {% for it in item %}
+                            <section class="span4">
+                                <h4 class="category"><a href="{{it.url}}">{{it.name}}</a></h4>
+                                <div class="category-description">
+                                    <p style="text-align: justify;">{{it.describe}}</p>
+                                </div>
+                            </section>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- end of page content -->
+            <!-- start of sidebar -->
+            <aside class="span4 page-sidebar">
+                <section class="widget">
+                    <h3 class="title">标签</h3>
+                    <div class="tagcloud">
+                        <a href="#" class="btn btn-mini">basic</a>
+                        <a href="#" class="btn btn-mini">beginner</a>
+                        <a href="#" class="btn btn-mini">blogging</a>
+                        <a href="#" class="btn btn-mini">colour</a>
+                        <a href="#" class="btn btn-mini">css</a>
+                        <a href="#" class="btn btn-mini">date</a>
+                        <a href="#" class="btn btn-mini">design</a>
+                        <a href="#" class="btn btn-mini">files</a>
+                        <a href="#" class="btn btn-mini">format</a>
+                        <a href="#" class="btn btn-mini">header</a>
+                        <a href="#" class="btn btn-mini">images</a>
+                        <a href="#" class="btn btn-mini">plugins</a>
+                        <a href="#" class="btn btn-mini">setting</a>
+                        <a href="#" class="btn btn-mini">templates</a>
+                        <a href="#" class="btn btn-mini">theme</a>
+                        <a href="#" class="btn btn-mini">time</a>
+                        <a href="#" class="btn btn-mini">videos</a>
+                        <a href="#" class="btn btn-mini">website</a>
+                        <a href="#" class="btn btn-mini">wordpress</a>
+                    </div>
+                </section>
+                <section class="widget" style="margin-top: 20px;">
+                    <h3 class="title">
+                        等你来答
+                        <a href="/questions" style="font-size: 12px; font-weight: normal; float: right;">更多>></a>
+                    </h3>
+                    <ul id="menu-quick-links" class="clearfix" s>
+                        <li><a href="index-2.html">Home</a></li>
+                        <li><a href="articles-list.html">Articles List</a></li>
+                        <li><a href="faq.html">FAQs</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </section>
+                <section class="widget">
+                    <a href="https://baidu.com">
+                        <img src="/uploads/ads/ad1.jpg" style="margin-bottom: 20px;" alt="">
+                    </a>
+                </section>
+            </aside>
+            <!-- end of sidebar -->
+        </div>
+    </div>
+</div>
+<!-- End of Page Container -->
+{% endblock %}

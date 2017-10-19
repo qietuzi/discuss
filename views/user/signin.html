@@ -1,0 +1,113 @@
+{% extends "user.html" %} {% block main %}
+<!-- Start of Page Container -->
+<style>
+    .signin input{
+        width: 100%;
+        height: 32px;
+        box-sizing: border-box;
+    }
+</style>
+<div class="page-container">
+    <div class="container">
+        <div class="row">
+            <form class="signin span4" style="float:none;margin:0 auto;" action="">
+                <div class="form-group">
+                    <input type="email" id="signin-username" class="form-control" name="email" value="" placeholder="请输入邮箱">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" class="form-control" name="password" value="" placeholder="请输入密码">
+                </div>
+                <div class="form-group" style="position:relative;display:none;" id="validcode" >
+                    <input type="text" class="form-control validcode" name="validcode" placeholder="请输入验证码">
+                    <img id="valid-code" alt="">
+                </div>
+                <button id="signIn" class="btn btn-primary btn-lg btn-block">登录</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+        var valide = false;
+        $('.signin').validate({
+            submitHandler: function(){
+                var postObj;
+                if(valide){
+                    if($('input[name=validcode]').val() == ''){
+                        layer.tips('验证码不能为空',$('input[name=validcode]'));
+                        return;
+                    }else{
+                        postObj = {
+                            email: $('input[name=email]').val(),
+                            password: $('input[name=password]').val(),
+                            validcode: $('input[name=validcode]').val()
+                        }
+                    }
+                }else{
+                    postObj = {
+                        email: $('input[name=email]').val(),
+                        password: $('input[name=password]').val()
+                    }
+                }
+                $.ajax({
+                    type: 'post',
+                    url: '/api/user/signin',
+                    data: postObj,
+                    dataType: 'json',
+                    beforeSend: function(){
+                        layer.load(1, {
+                            shade: [0.1,'#fff']
+                        });
+                    },
+                    success: function(res){
+                        layer.closeAll();
+                        if(res.status){
+                            layer.msg('登录成功，2s后跳转至首页',{time: 2000},function(){
+                                location.href = '/';
+                            })
+                        }else{
+                            layer.msg(res.msg);
+                            if(valide){
+                               window.validcode(); 
+                            }else if(res.validcode){
+                                valide = true;
+                                $('#validcode').show();
+                                window.validcode();
+                            }
+                        }
+                    }
+                });  
+            },
+            rules: {
+                email: {
+                    required: true,
+                    email:true
+                },
+                password: {
+                    required: true,
+                    rangelength:[4,16]
+                }
+            },
+            messages: {
+                email: {
+                    required: '邮箱不能为空',
+                    email: '邮箱格式不正确'
+                },
+                password: {
+                    required: '密码不能为空',
+                    rangelength: '密码长度在4-16位'
+                }
+            },
+            onfocusout: false,
+            onkeyup: false,
+            onclick: false,
+            showErrors: function(errorMap,errorList){
+                if(errorList.length){
+                    layer.tips(errorList[0].message,errorList[0].element);
+                }
+            }
+        });
+    })
+</script>
+<!-- End of Page Container -->
+{% endblock %}

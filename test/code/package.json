@@ -1,0 +1,23 @@
+{
+  "name": "gd-bmp",
+  "version": "1.0.2",
+  "description": "light and high speed and 100% js implement graphical library, it can running in any platform",
+  "main": "BMP24.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gd",
+    "bmp"
+  ],
+  "author": "zengming",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zengming00/node-gd-bmp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zengming00/node-gd-bmp/issues"
+  },
+  "homepage": "https://github.com/zengming00/node-gd-bmp#readme"
+}

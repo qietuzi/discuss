@@ -1,0 +1,12 @@
+input.validcode{
+    width: calc(100% - 90px);
+}
+#valid-code{
+    top: 0;
+    right: 0;
+    height: 34px;
+    display: block;
+    position: absolute;
+    border-radius: 2px;
+    border-color: #eaeaea;
+}

@@ -1,0 +1,192 @@
+{% extends "user.html" %} {% block main %}
+
+    <script src="static/wangEditor/wangEditor.min.js"></script>
+    <style>
+        .controls a{
+            font-size: 12px;
+            position: absolute;
+            margin: 12px;
+        }
+    </style>
+    <div class="span12" style="float:none;margin:20px auto;">
+        <form action="" method="post" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label">标题</label>
+                <div class="controls">
+                    <input type="text" name="title" placeholder="输入标题">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">类别</label>
+                <div class="controls">
+                    <select name="type">
+                        <option value="0">提问题</option>
+                        <option value="1">发表文章</option>
+                    </select>
+                    <a href="/appeal">没有找到分类？创建分类>></a>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">所属</label>
+                <div class="controls">
+                    <select name="category">
+                        {% for item in header.category %}
+                        <option value="{{item.parent}}">{{item.parent}}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="/appeal">没有找到分类？创建分类>></a>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">标签</label>
+                <div class="controls">
+                    <select name="tag">
+                        {% for item in tags %}
+                        <option value="{{item.name}}">{{item.name}}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="/appeal">没有找到标签？创建标签>></a>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">请详细描述你的问题</label>
+                <div class="controls">
+                    <div id="editor">
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls">
+                    <button type="button" class="btn" id="submit">提交</button>
+                    <button type="button" class="btn" onclick="history.go(-1)">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 注意， 只需要引用 JS，无需引用任何 CSS ！！！-->
+    <script type="text/javascript">
+        var allTag = {{ allTags|safe }};
+        $(function(){
+            var E = window.wangEditor
+            var editor = new E('#editor');
+
+            // 配置服务器端地址
+            // editor.customConfig.uploadImgServer = '/api/upload';
+            editor.customConfig.uploadImgServer = '/api/upload';
+            // 将图片大小限制为 3M
+            editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+            // 将 timeout 时间改为 30s
+            editor.customConfig.uploadImgTimeout = 30000;
+            // 上传图片时刻自定义设置 header
+            // editor.customConfig.uploadImgHeaders = {
+            //     'Accept': 'text/x-json'
+            // }
+            // 自定义 fileName
+            editor.customConfig.uploadFileName = 'files';
+            // 可使用监听函数在上传图片的不同阶段做相应处理
+            editor.customConfig.uploadImgHooks = {
+                before: function (xhr, editor, files) {
+                    layer.load(1, {
+                        shade: [0.3,'#fff']
+                    });
+                },
+                success: function (xhr, editor, result) {
+                    layer.closeAll();
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+                    // result.data.forEach(function(item) {
+                    //     editor.txt.append('<p><img src="' + item + '" /></p>');
+                    // });
+                },
+                fail: function (xhr, editor, result) {
+                    layer.closeAll();
+                    // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+                    layer.alert('图片上传出错！');
+                },
+                error: function (xhr, editor) {
+                    layer.closeAll();
+                    // 图片上传出错时触发
+                    layer.alert('图片上传出错！');
+                },
+                timeout: function (xhr, editor) {
+                    layer.closeAll();
+                    // 图片上传超时时触发
+                    layer.alert('图片上传超时！');
+                }
+            }
+
+            editor.create()
+
+            $('#submit').on('click', function(){
+                if($('input[name=title]').val()==''){
+                    layer.tips('标题不能为空',$('input[name=title]'));
+                    return;
+                }
+
+                if($('input[name=type]').val()==''){
+                    layer.tips('类型不能为空',$('input[name=title]'));
+                    return;
+                }
+
+                if($('input[name=category]').val()==''){
+                    layer.tips('分类不能为空',$('input[name=title]'));
+                    return;
+                }
+
+                if(editor.txt.html()==''){
+                    layer.tips('内容不能为空',$('input[name=title]'));
+                    return;    
+                }
+
+                var postObj = {
+                    title: $('input[name=title]').val(),
+                    type: $('select[name=type]').val(),
+                    category: $('select[name=category]').val(),
+                    content: editor.txt.html()
+                }
+
+                $.ajax({
+                    url: '/api/push',
+                    type: 'POST',
+                    data: postObj,
+                    dataType: 'json',
+                    beforeSend: function(){
+                        layer.load(1,{
+                            shade: [0.1,'#fff']
+                        });
+                    },
+                    success: function(res){
+                        layer.closeAll();
+                        if(res.status){
+                            layer.msg('提交成功', {time: 2000},function(){
+                                location.href = '/article/' + res.articleId;
+                            })
+                        }else{
+                            layer.alert(res.msg);
+                        }
+                    }
+                })
+            });
+
+            $('select[name=category]').on('change', function(){
+                var thisCategory = $(this).val();
+                for(var i=0;i<allTag.length;i++){
+                    if(allTag[i].name ==thisCategory){
+                        var tags = allTag[i].children;
+                        break;
+                    }
+                }
+
+                var options = '';
+                tags.forEach(function(item) {
+                    options += '<option value="' + item.name + '">' + item.name + '</option>';
+                }, this);
+
+                $('select[name=tag]').html(options);
+            })
+
+        })
+    </script>
+
+{% endblock %}

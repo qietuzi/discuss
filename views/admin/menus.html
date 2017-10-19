@@ -1,0 +1,195 @@
+{% extends 'admin.html' %} {% block main %}
+<!-- MAIN CONTENT -->
+<div class="panel">
+	<div class="panel-heading">
+		<h3 class="panel-title">菜单管理</h3>
+		<p class="warn" style="margin-top:1em;">
+			<small>菜单管理主要管理前端菜单，最多仅支持二级菜单，父级为二级菜单不会显示</small>
+		</p>
+	</div>
+	<button class="btn btn-default" id="create" style="position: absolute;right: 2em;margin-top: -4em;">新建菜单</button>	
+	<div class="panel-body">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>名称</th>
+					<th>url</th>
+					<th>父级</th>
+					<th>模型</th>
+					<th>操作</th>
+					<th>描述</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in menus %}
+				<tr>
+					<td>{{item.name}}</td>
+					<td class="url">{{item.url}}</td>
+					<td>{{item.parent}}</td>
+					<td>{{item.model}}</td>
+					<td>{{item.describe}}</td>
+					<td>
+						<a class="edit" data-id="{{item.id}}" href="javascript:void(0);">编辑</a>
+						<a class="delete" data-id="{{item.id}}" href="javascript:void(0);">删除</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<!-- PAGE -->
+	<div class="jogger">
+		{% if currentpage == pages[0].page %}
+			<span class="disabled"> &gt; </span>
+		{% else %}
+			<a href="/admin/tag/{{currentpage|int +1}}"> &lt; </a>
+		{% endif %}
+
+		{% for item in pages %}
+			{% if item.page=='···' %}
+				<a href="javascript:void(0);">{{item.page}}</a>
+			{% elseif item.active %}
+				<span class="current">{{item.page}}</span>
+			{% else %}
+				<a href="/admin/tag/{{item.page}}">{{item.page}}</a>
+			{% endif %}
+		{% endfor %}
+
+		{% if currentpage == pages[pages.length-1].page %}
+			<span class="disabled"> &gt; </span>
+		{% else %}
+			<a href="/admin/tag/{{currentpage|int +1}}"> &gt; </a>
+		{% endif %}
+	</div>
+</div>
+
+<script>
+	$(function(){
+		var id,type;
+
+		var openMenuDiv =function(obj){
+			if(!obj){
+				var obj = {
+					name: '',
+					url: '',
+					parent: '',
+					model: '',
+					describe: ''
+				}
+			}
+
+			layer.open({
+				title: '添加菜单',
+				type: 1,
+				area: '400px',
+				content: `<form class="newMenu" style="width:400px;padding:20px;">
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.name}" placeholder="菜单名称" type="text" class="form-control" name="menuName"></div>
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.url}" placeholder="url地址" type="text" class="form-control menuUrl" name="menuUrl"></div>
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.parent}" placeholder="父级菜单" type="text" class="form-control" name="menuParent"></div>
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.model}" placeholder="菜单模型" type="text" class="form-control" name="menuModel"></div>
+							<div class="gorm-group" style="margin:10px 0;"><input value="${obj.describe}" placeholder="菜单描述" type="text" class="form-control" name="describe"></div>
+							<div class="gorm-group" style="margin:10px 0;"><button type="submit" class="form-control btn btn-default">确定</button></div>
+						</form>`
+			});
+		}
+
+
+		$('#create').on('click', function(){
+			type = 1;
+			id = null;
+			openMenuDiv();
+		});
+
+		$(document).on('click','.newMenu .btn', function(){
+			$('.newMenu').validate({
+				submitHandler: function(){
+					var postObj = {
+						type: type,
+						id: id,
+						menuName: $('input[name=menuName]').val(),
+						menuUrl: $('input[name=menuUrl]').val(),
+						menuParent: $('input[name=menuParent]').val(),
+						menuModel: $('input[name=menuModel]').val(),
+						describe: $('input[name=describe]').val()
+					}
+					$.post('/api/admin/menu', postObj, function(res){
+						layer.closeAll();
+						if(res.status){
+							location.reload();
+							layer.msg(res.msg);
+						}else{
+							if(res.code == 403){
+								layer.alert(res.msg, function(){
+									location.href = '/admin/sign.html';
+								})
+							}else{
+								layer.msg(res.msg)
+							}
+						}
+					});
+				},
+				rules: {
+					menuName: 'required',
+					menuUrl: {
+						required: true,
+						// rangelength: [5, 16]
+					}
+				},
+				messages: {
+					menuName: '菜单名称不能为空',
+					menuUrl: {
+						required: '菜单地址不能为空',
+						// minlength: '密码长度应在5-16位之间'
+					}
+				},
+				onfocusout: false,
+				onkeyup: false,
+				onclick: false,
+				showErrors: function(errorMap,errorList){
+					if(errorList.length){
+						layer.tips(errorList[0].message,errorList[0].element);
+					}
+				}
+			});
+		});
+
+		$('.edit').on('click', function(){
+			type = 2;
+			id = $(this).attr('data-id');
+			var obj = {
+				name: $(this).parent().parent().find('td').eq(0).text() || '',
+				url: $(this).parent().parent().find('td').eq(1).text() || '',
+				parent: $(this).parent().parent().find('td').eq(2).text() || '',
+				model: $(this).parent().parent().find('td').eq(3).text() || '',
+				describe: $(this).parent().parent().find('td').eq(4).text() || ''
+			}
+			openMenuDiv(obj);
+		});
+
+		$('.delete').on('click', function(){
+			type = 3;
+			var id = $(this).attr('data-id');
+			var postObj = {
+				id: id,
+				type: type
+			}
+			$.post('/api/admin/menu',postObj,function(res){
+				if(!res.status){
+					if(res.code == 403){
+						layer.alert(res.msg, function(){
+							location.href = '/admin/sign.html';
+						})
+					}else{
+						layer.msg(res.msg)
+					}
+				}else{
+					layer.msg(res.msg, function(){
+						location.reload();
+					})
+				}
+			})
+		})
+	})
+</script>
+<!-- END MAIN CONTENT -->
+{% endblock %}

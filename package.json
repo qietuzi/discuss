@@ -1,0 +1,30 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gd-bmp": "^1.0.2",
+    "ioredis": "^3.0.0",
+    "koa": "^2.2.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-multer": "^1.0.1",
+    "koa-router": "^7.1.1",
+    "koa-session2": "^2.2.4",
+    "koa-static": "^3.0.0",
+    "koa-views": "^6.0.2",
+    "log4js": "^1.1.1",
+    "marked": "^0.3.6",
+    "moment": "^2.18.1",
+    "mysql": "^2.13.0",
+    "node-uuid": "^1.4.8",
+    "nunjucks": "^3.0.0",
+    "sequelize": "^3.30.4",
+    "sha1": "^1.1.1"
+  }
+}

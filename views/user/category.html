@@ -1,0 +1,153 @@
+{% extends "user.html" %} {% block main %}
+
+        <!-- Start of Page Container -->
+        <style>
+                .alltags a{
+                        float: left;
+                        color: #fff; 
+                        display: block;
+                        padding: 5px 8px; 
+                        margin-right: 16px;
+                        border-radius: 5px;
+                        margin-bottom: 10px;
+                        background: #ff7429; 
+                }
+                .alltags a.active,.alltags a:hover{
+                        background: #ff2929;
+                }
+        </style>
+        <div class="page-container">
+                <div class="container">
+                        <div class="row">
+                                <div class="span12 alltags">
+                                        <h2>{{ category }}</h2>
+                                        {% if tag == 'all' %}
+                                                <a href="/category/{{category}}" class="active">全部标签</a>
+                                        {% else %}
+                                                <a href="/category/{{category}}">全部标签</a>
+                                        {% endif %}
+
+                                        {% for item in allTags %}
+                                                {% if tag == item.name %}
+                                                        <a href="/category/{{category}}/{{item.name}}" class="active">{{item.name}}</a>
+                                                {% else %}
+                                                        <a href="/category/{{category}}/{{item.name}}">{{item.name}}</a>
+                                                {% endif %}
+                                        {% endfor %}
+                                </div>
+                                <!-- start of page content -->
+                                <div class="span8 main-listing">
+                                        {% for item in articles %}
+                                                <article class="format-standard type-post hentry clearfix" style="margin-bottom: 10px;">
+                                                        <header class="clearfix">
+                                                                <h3 class="post-title">
+                                                                        <a href="/article/{{item.id}}">{{item.title}}</a>
+                                                                </h3>
+                                                                <div class="post-meta clearfix">
+                                                                        <span class="date">{{item.createdAt|timeFormat}}</span>
+                                                                        <span class="category"><a href="/tags/{{item.tag}}">{{item.tag}}</a></span>
+                                                                        <span class="comments"><a href="javascript:void(0);">Comments {{item.comment}}</a></span>
+                                                                        <span class="like-count" style="cursor: pointer;">{{item.like}}</span>
+                                                                </div>
+                                                                <!-- end of post meta -->
+                                                        </header>
+                                                        <p>{{item.content|stringSub(200)}} . . . <a class="readmore-link" href="/article/{{item.id}}">Read more</a></p>
+                                                </article>
+                                        {% endfor %}
+
+                                        <div id="pagination">
+                                                {% for item in pages %}
+                                                        {% if page == pages[0].page %}
+                                                                <span class="btn disabled"> &lt; </span>
+                                                        {% else %}
+                                                                <a class="btn" href="/category/{{currentCate}}/{{tag}}/{{item.page|int -1}}"> &lt; </a>
+                                                        {% endif %}
+                                                
+                                                        {% if item.active %}
+                                                                <a href="/category/{{currentCate}}/{{tag}}/{{item.page}}" class="btn active">{{item.page}}</a>
+                                                        {% else %}
+                                                                <a href="/category/{{currentCate}}/{{tag}}/{{item.page}}" class="btn">{{item.page}}</a>
+                                                        {% endif %}
+
+                                                        {% if page == pages[pages.length-1].page %}
+                                                                <span class="btn disabled"> &gt; </span>
+                                                        {% else %}
+                                                                <a class="btn" href="/category/{{currentCate}}/{{tag}}/{{item.page|int +1}}"> &gt; </a>
+                                                        {% endif %}
+                                                {% endfor %}
+                                        </div>
+
+                                        {% if articles.length == 0 %}
+                                                <h4 style="font-weight: normal; text-align: center; margin: 40px;">暂时没有问题或文章，<a href="/push" style="text-decoration: underline;">立即提问>></a></h4>
+                                        {% endif %}
+                                </div>
+                                <!-- end of page content -->
+                                <!-- start of sidebar -->
+                                <aside class="span4 page-sidebar">
+
+                                        <section class="widget">
+                                                <div class="support-widget">
+                                                        <h3 class="title">Support</h3>
+                                                        <p class="intro">Need more support? If you did not found an answer, contact us for further help.</p>
+                                                </div>
+                                        </section>
+
+
+                                        <section class="widget">
+                                                <h3 class="title">Featured Articles</h3>
+                                                <ul class="articles">
+                                                        <li class="article-entry standard">
+                                                                <h4><a href="single.html">Integrating WordPress with Your Website</a></h4>
+                                                                <span class="article-meta">25 Feb, 2013 in <a href="#" title="View all posts in Server &amp; Database">Server &amp; Database</a></span>
+                                                                <span class="like-count">66</span>
+                                                        </li>
+                                                        <li class="article-entry standard">
+                                                                <h4><a href="single.html">WordPress Site Maintenance</a></h4>
+                                                                <span class="article-meta">24 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                <span class="like-count">15</span>
+                                                        </li>
+                                                        <li class="article-entry video">
+                                                                <h4><a href="single.html">Meta Tags in WordPress</a></h4>
+                                                                <span class="article-meta">23 Feb, 2013 in <a href="#" title="View all posts in Website Dev">Website Dev</a></span>
+                                                                <span class="like-count">8</span>
+                                                        </li>
+                                                        <li class="article-entry image">
+                                                                <h4><a href="single.html">WordPress in Your Language</a></h4>
+                                                                <span class="article-meta">22 Feb, 2013 in <a href="#" title="View all posts in Advanced Techniques">Advanced Techniques</a></span>
+                                                                <span class="like-count">6</span>
+                                                        </li>
+                                                </ul>
+                                        </section>
+
+
+
+                                        <section class="widget"><h3 class="title">Categories</h3>
+                                                <ul>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet,">Advanced Techniques</a> </li>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet,">Designing in WordPress</a></li>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet,">Server &amp; Database</a></li>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet, ">Theme Development</a></li>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet,">Website Dev</a></li>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet,">WordPress for Beginners</a></li>
+                                                        <li><a href="#" title="Lorem ipsum dolor sit amet, ">WordPress Plugins</a></li>
+                                                </ul>
+                                        </section>
+
+                                        <section class="widget">
+                                                <h3 class="title">Recent Comments</h3>
+                                                <ul id="recentcomments">
+                                                        <li class="recentcomments"><a href="#" rel="external nofollow" class="url">John Doe</a> on <a href="#">Integrating WordPress with Your Website</a></li>
+                                                        <li class="recentcomments">saqib sarwar on <a href="#">Integrating WordPress with Your Website</a></li>
+                                                        <li class="recentcomments"><a href="#" rel="external nofollow" class="url">John Doe</a> on <a href="#">Integrating WordPress with Your Website</a></li>
+                                                        <li class="recentcomments"><a href="#" rel="external nofollow" class="url">Mr WordPress</a> on <a href="#">Installing WordPress</a></li>
+                                                </ul>
+                                        </section>
+
+                                </aside>
+                                <!-- end of sidebar -->
+                        </div>
+                </div>
+        </div>
+        <!-- End of Page Container -->
+
+{% endblock %}
