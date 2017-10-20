@@ -28,15 +28,15 @@ var header = async(ctx)=>{
     var menus;
     var category;
     if(store){
-        menus = await store.get('menus');
-        category = await store.get('category');
+        menus = await store.getItem('menus');
+        category = await store.getItem('category');
         if(!menus){
             menus = await Menu.findAll();
-            await store.set('menus', menus);
+            await store.setItem('menus', menus);
         }
         if(!category){
             category = await Category.findAll();
-            await store.set('category', category);
+            await store.setItem('category', category);
         }
     }else{
         menus = await Menu.findAll();

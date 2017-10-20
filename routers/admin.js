@@ -4,7 +4,6 @@ const tags = require(path.normalize('../controllers/admin/tags'))
 const admin = require(path.normalize('../controllers/admin/admin'))
 const index = require(path.normalize('../controllers/admin/index'))
 const menus = require(path.normalize('../controllers/admin/menus'))
-const firstIn = require(path.normalize('../controllers/admin/firstIn'))
 const warpper = require(path.normalize('../controllers/admin/warpper'))
 
 module.exports = [
@@ -19,18 +18,18 @@ module.exports = [
         method: 'get',
         controller: admin.signIn
     },
-
-
-
-
-
     // 第一次登录后台
     {
-        url: '/admin/first',
+        url: '/admin/firstIn',
         method: 'get',
-        controller: firstIn
+        controller: admin.firstIn
     },
     
+
+
+
+
+
     // 后台模板框架页
     {
         url: '/admin/warpper',

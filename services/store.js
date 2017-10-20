@@ -1,6 +1,7 @@
 const Redis = require("ioredis")
-const { Store } = require("koa-session2")
+const logger = require('./logger')
 const config = require('../config')
+const { Store } = require("koa-session2")
 
 var store;
 
@@ -26,6 +27,23 @@ class RedisStore extends Store {
     async destroy(sid) {
         return await this.redis.del(`SESSION:${sid}`);
     }
+
+    /* 都是koa2-session害的，不能修改koa2-session包，不然重新安装出错 */
+    async getItem(key) {
+        let data = await this.redis.get(key);
+        return JSON.parse(data);
+    }
+
+    async setItem(key, value) {
+        try {
+            await this.redis.set(key, JSON.stringify(value));
+        } catch (e) {
+            logger.error(`redis set ${key} : ${JSON.stringify(value)}`);
+            next();
+        }
+    }
+
+
 }
 if(config.redis){
     store = new RedisStore()
