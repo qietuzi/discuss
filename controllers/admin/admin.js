@@ -6,7 +6,6 @@ const store = require('../../services/store')
 const logger = require('../../services/logger')
 const Admin = require(path.normalize('../../models/admin'))
 
-const hash = crypto.createHash('sha1')
 
 // 是否存在管理员
 const getAdminCount = async(ctx, next)=>{
@@ -30,7 +29,7 @@ const getAdminCount = async(ctx, next)=>{
 module.exports = {
     // 管理员首页
     async wrapper(ctx, next){
-        var userInfo = store ? await store.get(ctx.session.sid) : ctx.session.userInfo;
+        var userInfo = ctx.session.userInfo;
         ctx.render('admin/warpper.html',{
             title: '论坛管理后台',
             userInfo
@@ -39,8 +38,8 @@ module.exports = {
     // 管理员登陆
     async signIn(ctx, next){
         var adminCount;
-        var userInfo = store ? await store.get(ctx.session.sid) : ctx.session.userInfo;
-        if(userInfo && (userInfo.permissions !== undefined) && userInfo.sign){
+        var userInfo = ctx.session.userInfo;
+        if(userInfo && (userInfo.permissions !== undefined) && ctx.session.signed){
             ctx.redirect('/admin')
         }else{
             var adminExsit = await getAdminCount(ctx, next);
@@ -113,7 +112,7 @@ module.exports = {
                 try {
                     newAdmin = {
                         username: ctx.request.body.username,
-                        password: hash.update(ctx.request.body.password).digest('hex')
+                        password: crypto.createHash('sha1').update(ctx.request.body.password).digest('hex')
                     }
                     await Admin.create(newAdmin);
                     await store.setItem('adminCount', '1');
@@ -126,10 +125,85 @@ module.exports = {
                         status: false,
                         msg: err.message
                     }
-                    logger.error(`createSupper at err.message`);
+                    logger.error('error:create admin error at file controllers/admin/admin.js row 128');
                 }
             }
         }
+        ctx.rest(data);
+    },
+    // 后台登录
+    async signInAPI(ctx, next){
+        var data;
+        if(!ctx.session.validcode){
+            data = {
+                status: false,
+                msg: '验证码已过期，请刷新'
+            }
+            ctx.rest(data);
+            return false;
+        }
+
+        if(ctx.request.body.validcode.toLowerCase() !== ctx.session.validcode.toLowerCase()){
+            data = {
+                status: false,
+                msg: '验证码错误'
+            }
+            ctx.rest(data);
+            return false;
+        }
+
+        let AdminSchema = schema({
+            username: {
+                type: 'string',
+                required: true,
+                message: '用户名不能为空'
+            },
+            password: {
+                type: 'string',
+                required: true,
+                message: '密码不能为空'
+            }
+        })
+        var errs = AdminSchema.validate({
+            username: ctx.request.body.username,
+            password: ctx.request.body.password
+        })
+        if(errs.length){
+            data = {
+                status: false,
+                msg: errs[0].message
+            }
+        }else{
+            try{
+                let userInfo = await Admin.find({
+                    where: {
+                        username: ctx.request.body.username
+                    }
+                })
+                if(userInfo && userInfo.password == crypto.createHash('sha1').update(ctx.request.body.password).digest('hex')){
+                    data = {
+                        status: true,
+                        msg: '登录成功'
+                    }
+                    ctx.session.signed = true;
+                    ctx.session.userInfo = userInfo;
+                    if(ctx.request.body.markSign){
+                    }
+                }else{
+                    data = {
+                        status: false,
+                        msg: '账号或密码错误'
+                    }
+                }
+            }catch(err){
+                data = {
+                    status: false,
+                    msg: err.message
+                }
+                logger.error('error:find admin error at file controllers/admin/admin.js row 202')
+            }
+        }
+
         ctx.rest(data);
     }
 }

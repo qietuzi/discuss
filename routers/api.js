@@ -25,11 +25,11 @@ module.exports = [
         controller: admin.createSupper
     },
     // 后台管理员登录
-    // {
-    //     url: '/api/admin/signIn',
-    //     method: 'post',
-    //     controller: admin.signIn
-    // },
+    {
+        url: '/api/admin/signIn',
+        method: 'post',
+        controller: admin.signInAPI
+    },
     // // 后台菜单管理
     // {
     //     url: '/api/admin/menu',
