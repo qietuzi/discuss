@@ -77,21 +77,7 @@ module.exports = {
             return;
         }
 
-        const superAdminSchema = schema({
-            username: {
-                type: 'string',
-                required: true,
-                match: /^[a-zA-Z][a-zA-Z0-9_]{4,16}$/,
-                message: '用户名格式不正确'
-            },
-            password: {
-                type: 'string',
-                required: true,
-                match: /^[a-zA-Z]\w{4,16}$/,
-                message: '密码格式不正确'
-            }
-        })
-
+        
         let adminExsit = await getAdminCount()
         if(adminExsit){
             data = {
@@ -99,6 +85,20 @@ module.exports = {
                 msg: '超级管理员已存在'
             }
         }else{
+            const superAdminSchema = schema({
+                username: {
+                    type: 'string',
+                    required: true,
+                    match: /^[a-zA-Z][a-zA-Z0-9_]{4,16}$/,
+                    message: '用户名格式不正确'
+                },
+                password: {
+                    type: 'string',
+                    required: true,
+                    match: /^[a-zA-Z]\w{4,16}$/,
+                    message: '密码格式不正确'
+                }
+            })
             let errs = superAdminSchema.validate({
                 username: ctx.request.body.username,
                 password: ctx.request.body.password

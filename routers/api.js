@@ -1,10 +1,12 @@
 const path = require('path')
 const tag = require(path.normalize('../controllers/api/tag'))
 const user = require(path.normalize('../controllers/api/user'))
-const menu = require(path.normalize('../controllers/api/menu'))
 const push = require(path.normalize('../controllers/api/push'))
-const admin = require(path.normalize('../controllers/admin/admin'))
 const article = require(path.normalize('../controllers/api/article'))
+
+
+const menu = require(path.normalize('../controllers/admin/menu'))
+const admin = require(path.normalize('../controllers/admin/admin'))
 const validcode = require(path.normalize('../controllers/api/validcode'))
 const uploadImg = require(path.normalize('../controllers/api/uploadImg'))
 
@@ -30,12 +32,13 @@ module.exports = [
         method: 'post',
         controller: admin.signInAPI
     },
-    // // 后台菜单管理
-    // {
-    //     url: '/api/admin/menu',
-    //     method: 'post',
-    //     controller: menu
-    // },
+
+    // 后台创建菜单
+    {
+        url: '/api/menu/createMenu',
+        method: 'post',
+        controller: menu.createMenu
+    },
     // // 后台标签管理
     // {
     //     url: '/api/admin/tag',

@@ -1,10 +1,9 @@
 const path = require('path')
-const sign = require(path.normalize('../controllers/admin/sign'))
 const tags = require(path.normalize('../controllers/admin/tags'))
-const admin = require(path.normalize('../controllers/admin/admin'))
 const index = require(path.normalize('../controllers/admin/index'))
-const menus = require(path.normalize('../controllers/admin/menus'))
-const warpper = require(path.normalize('../controllers/admin/warpper'))
+
+const menu = require(path.normalize('../controllers/admin/menu'))
+const admin = require(path.normalize('../controllers/admin/admin'))
 
 module.exports = [
     {
@@ -30,12 +29,6 @@ module.exports = [
 
 
 
-    // 后台模板框架页
-    {
-        url: '/admin/warpper',
-        method: 'get',
-        controller: warpper
-    },
     // 一览
     {
         url: '/admin/index',
@@ -46,7 +39,7 @@ module.exports = [
     {
         url: '/admin/menus',
         method: 'get',
-        controller: menus
+        controller: menu.manger
     },
     // 标签管理
     {

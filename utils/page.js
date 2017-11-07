@@ -1,7 +1,7 @@
 class Page {
     init(currentPage, allPage, cutNum) {
         this.currentPage = parseInt(currentPage || 1);
-        this.allPage = parseInt(allPage);
+        this.allPage = allPage ? parseInt(allPage) : 1;
         this.cutNum = parseInt(cutNum || 11);
         return this.main();
     }
