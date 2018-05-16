@@ -8,7 +8,7 @@ module.exports = function(){
         var adminReg = /^\/admin/;
 
         if((url !== '/admin/signIn' && url !== '/admin/firstIn') && adminReg.test(url)){
-            if(!userInfo || (userInfo.permissions === undefined) || !ctx.session.signed){
+            if(!userInfo || (userInfo.roleId === undefined) || !ctx.session.signed){
                 return ctx.redirect("/admin/signIn")
             }
         }

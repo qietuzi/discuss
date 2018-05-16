@@ -1,9 +1,10 @@
 const path = require('path')
+const admin = require(path.normalize('../controllers/admin'))
+
 const tags = require(path.normalize('../controllers/admin/tags'))
-const index = require(path.normalize('../controllers/admin/index'))
+// const index = require(path.normalize('../controllers/admin/index'))
 
 const menu = require(path.normalize('../controllers/admin/menu'))
-const admin = require(path.normalize('../controllers/admin/admin'))
 
 module.exports = [
     {
@@ -23,18 +24,12 @@ module.exports = [
         method: 'get',
         controller: admin.firstIn
     },
-    
-
-
-
-
-
     // 一览
-    {
-        url: '/admin/index',
-        method: 'get',
-        controller: index
-    },
+    // {
+    //     url: '/admin/index',
+    //     method: 'get',
+    //     controller: index
+    // },
     // 菜单管理
     {
         url: '/admin/menus',

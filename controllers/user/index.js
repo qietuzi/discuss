@@ -4,7 +4,7 @@ const Article = require('../../models/article')
 const util = require('../../utils/utils')
 
 module.exports = async (ctx,next)=>{
-    var header = await Header(ctx);
+    // var header = await Header(ctx);
 
     var newArticles = await Article.findAll({
         order: [['createdAt', 'DESC']],
@@ -18,10 +18,11 @@ module.exports = async (ctx,next)=>{
         offset: 1
     });
 
-    ctx.render('user/index.html',{
+    ctx.render('front/index.html',{
         index: true,
-        header: header,
+        title: 'Love Coding',
         newArticles: newArticles,
         hotArticles: hotArticles,
+        user: ctx.session.signed ? ctx.session.userinfo : null,
     });
 }

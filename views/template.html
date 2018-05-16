@@ -10,7 +10,7 @@
     <!-- META TAGS -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{header.title}}</title>
+    <title>{{title}}</title>
     <link rel="shortcut icon" href="/static/user/images/favicon.png" />
     <!-- Style Sheet-->
     <link rel='stylesheet' href='/static/user/css/bootstrap.css' type='text/css' />
@@ -47,30 +47,14 @@
                 <nav class="main-nav">
                     <div class="menu-top-menu-container">
                         <ul id="menu-top-menu" class="clearfix">
-                            {% for item in header.menus %}
-                                {% if item.children.length %}
-                                    <li><a href="{{item.url}}">{{item.name}}</a>
-                                        <ul class="sub-menu">
-                                            {% for it in item.children %}
-                                                <li><a href="{{it.url}}">{{it.name}}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                {% else %}
-                                    <li><a href="{{item.url}}">{{item.name}}</a>
-                                        {% if item.name == '分类' %}
-                                            <ul class="sub-menu" style="width: 600px;left: -150px;">
-                                                {% for it in header.category %}
-                                                    <li style="padding:6px 0px; float: left; text-indent: 10px;"><a href="/category/{{it.parent}}">{{it.parent}}</a></li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
+                            <li><a href="/">首页</a></li>
+                            <li><a href="/questions">问答</a></li>
+                            <li><a href="/share">分享</a></li>
+                            <li><a href="/jobs">招聘</a></li>
+                            <li><a href="/around">周边</a></li>
                             <!--判断是否登录-->
-                            {% if header.user %}
-                                <li class="float-right"><a href="/user">{{header.user.nickname or header.user.email}}</a>
+                            {% if user %}
+                                <li class="float-right"><a href="/user">{{user.nickname or user.email}}</a>
                                     <ul class="sub-menu">
                                         <li><a href="">个人中心</a></li>
                                         <li><a href="">账户设置</a></li>

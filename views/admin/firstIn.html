@@ -54,7 +54,7 @@
                         password: $('input[name=password]').val(),
                         rePassword: $('input[name=rePassword]').val()
                     }
-                    $.post('/api/admin/createSupper', postObj, function(res){
+                    $.post('/api/admin/createAdmin', postObj, function(res){
                         if(res.status){
                             location = '/admin/sign.html';
                         }else{

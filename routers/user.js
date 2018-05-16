@@ -1,4 +1,5 @@
 const path = require('path')
+const user = require(path.normalize('../controllers/user'))
 const push = require(path.normalize('../controllers/user/push'))
 const missed = require(path.normalize('../controllers/user/404'))
 const index = require(path.normalize('../controllers/user/index'))
@@ -12,7 +13,7 @@ module.exports = [
     {
         url: '/',
         method: 'get',
-        controller: index
+        controller: user.index
     },
     {
         url: '/index.html',

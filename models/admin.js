@@ -16,7 +16,7 @@ const Admin = db.defineModel('admin', {
     email: {
         type: db.STRING
     },
-    permissions: {
+    roleId: {
         type: db.BIGINT
     },
     enable: {

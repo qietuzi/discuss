@@ -2,9 +2,9 @@ const path = require('path')
 const crypto = require('crypto')
 const moment = require('moment')
 const schema = require('validate')
-const store = require('../../services/store')
-const logger = require('../../services/logger')
-const Admin = require(path.normalize('../../models/admin'))
+const Admin = require(path.normalize('../models/admin'))
+const store = require(path.normalize('../services/store'))
+const logger = require(path.normalize('../services/logger'))
 
 
 // 是否存在管理员
@@ -39,7 +39,7 @@ module.exports = {
     async signIn(ctx, next){
         var adminCount;
         var userInfo = ctx.session.userInfo;
-        if(userInfo && (userInfo.permissions !== undefined) && ctx.session.signed){
+        if(userInfo && (userInfo.roleId !== undefined) && ctx.session.signed){
             ctx.redirect('/admin')
         }else{
             var adminExsit = await getAdminCount(ctx, next);
@@ -63,11 +63,15 @@ module.exports = {
             })
         }
     },
-
-
-    // 创建超级管理员
-    async createSupper(ctx, next){
-        var data;
+    // 创建管理员
+    async createAdmin(ctx, next){
+        var data, roleId, adminExsit, permission;
+        try{
+            roleId = ctx.session.userInfo.roleId;
+        }catch(err){
+            roleId = 0;
+        }
+        
         if(ctx.request.body.password !== ctx.request.body.rePassword){
             data = {
                 status: false,
@@ -77,15 +81,25 @@ module.exports = {
             return;
         }
 
-        
-        let adminExsit = await getAdminCount()
+        if(ctx.request.body.roleId){
+            adminExsit = false;
+        }else{
+            roleId = 1000;
+            adminExsit = await getAdminCount();
+        }
+
         if(adminExsit){
             data = {
                 status: false,
                 msg: '超级管理员已存在'
             }
+        }else if(ctx.request.body.roleId >= roleId){
+            data = {
+                status: false,
+                msg: '权限不足'
+            }
         }else{
-            const superAdminSchema = schema({
+            const adminSchema = schema({
                 username: {
                     type: 'string',
                     required: true,
@@ -99,7 +113,7 @@ module.exports = {
                     message: '密码格式不正确'
                 }
             })
-            let errs = superAdminSchema.validate({
+            let errs = adminSchema.validate({
                 username: ctx.request.body.username,
                 password: ctx.request.body.password
             });
@@ -130,6 +144,80 @@ module.exports = {
             }
         }
         ctx.rest(data);
+    },
+    // 编辑管理员
+    async editAdmin(ctx, next){
+        var data;
+        var uid = ctx.request.body.id;
+        var info = {
+            nickname: ctx.request.body.nickname,
+            tel: ctx.request.body.nickname,
+            email: ctx.request.body.nickname
+        }
+        if(uid != ctx.session.userInfo.id){
+            data = {
+                status: false,
+                msg: '权限不足'
+            }
+        }else{
+            const adminSchema = schema({
+                nickname: {
+                    type: 'string',
+                    message: '昵称不能为空'
+                },
+                tel: {
+                    type: 'string',
+                    match: /^1(3|4|5|7|8)\d{9}$/,
+                    message: '手机号格式不正确'
+                },
+                email: {
+                    type: 'string',
+                    match: /^[A-Za-zd]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/,
+                    message: '邮箱格式不正确'
+                }
+            })
+            let errs = adminSchema.validate(info);
+            if(errs.length){
+                data = {
+                    status: false,
+                    msg: errs[0].message
+                }
+            }else{
+                try{
+                    await Admin.update(info, {
+                        where: {id: uid }
+                    })
+                    let userInfo = await Admin.findById(uid)
+                    ctx.session.userInfo = userInfo;
+                    data = {
+                        status: true,
+                        msg: '保存成功'
+                    }
+                }catch(err){
+                    data = {
+                        status: false,
+                        msg: errs.message
+                    }
+                }
+            }
+        }
+        ctx.rest(data)
+    },
+    // 禁用、删除管理员
+    async adminOption(ctx, next){
+        var data;
+        
+
+
+
+
+
+
+
+
+
+
+        
     },
     // 后台登录
     async signInAPI(ctx, next){

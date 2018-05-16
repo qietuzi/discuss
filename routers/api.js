@@ -1,16 +1,17 @@
 const path = require('path')
-const tag = require(path.normalize('../controllers/api/tag'))
-const user = require(path.normalize('../controllers/api/user'))
-const push = require(path.normalize('../controllers/api/push'))
-const article = require(path.normalize('../controllers/api/article'))
+const admin = require(path.normalize('../controllers/admin'))
+
+// const tag = require(path.normalize('../controllers/api/tag'))
+// const user = require(path.normalize('../controllers/api/user'))
+// const push = require(path.normalize('../controllers/api/push'))
+// const article = require(path.normalize('../controllers/api/article'))
 
 
 const menu = require(path.normalize('../controllers/admin/menu'))
-const admin = require(path.normalize('../controllers/admin/admin'))
 const validcode = require(path.normalize('../controllers/api/validcode'))
-const uploadImg = require(path.normalize('../controllers/api/uploadImg'))
+// const uploadImg = require(path.normalize('../controllers/api/uploadImg'))
 
-const uploadConfig = require(path.normalize('../config/uploadConfig'))
+// const uploadConfig = require(path.normalize('../config/uploadConfig'))
 
 
 module.exports = [
@@ -20,25 +21,45 @@ module.exports = [
         method: 'get',
         controller: validcode
     },
-    // 创建超级管理员
+    // 管理员管理
+    //      创建管理员
     {
-        url: '/api/admin/createSupper',
+        url: '/api/admin/createAdmin',
         method: 'post',
-        controller: admin.createSupper
+        controller: admin.createAdmin
     },
-    // 后台管理员登录
+    //      编辑管理员
+    {
+        url: '/api/admin/editAdmin',
+        method: 'post',
+        controller: admin.editAdmin
+    },
+    //      禁用、删除管理员
+    // {
+    //     url: '/api/admin/option',
+    //     method: 'post',
+    //     controller: admin.option
+    // },
+    //      管理员登录
     {
         url: '/api/admin/signIn',
         method: 'post',
         controller: admin.signInAPI
     },
-
-    // 后台创建菜单
+    // 菜单管理
+    //      创建菜单
     {
         url: '/api/menu/createMenu',
         method: 'post',
         controller: menu.createMenu
     },
+    //      编辑菜单
+    //      禁用、删除菜单
+
+
+
+
+
     // // 后台标签管理
     // {
     //     url: '/api/admin/tag',
