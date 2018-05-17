@@ -1,9 +1,9 @@
 // const user = require(path.normalize('../controllers/user'))
 // const push = require(path.normalize('../controllers/user/push'))
-// const missed = require(path.normalize('../controllers/user/404'))
+const missed = require('../controllers/front/404')
 const index = require('../controllers/front/index')
-// const signup = require(path.normalize('../controllers/user/signup'))
-// const signin = require(path.normalize('../controllers/user/signin'))
+const signup = require('../controllers/front/signup')
+const signin = require('../controllers/front/signin')
 // const article = require(path.normalize('../controllers/user/article'))
 // const category = require(path.normalize('../controllers/user/category'))
 
@@ -25,19 +25,19 @@ module.exports = [
         controller: index
     },
 
-
-    // // 注册
-    // {
-    //     url: '/signup',
-    //     method: 'get',
-    //     controller: signup
-    // },
-    // // 登录
-    // {
-    //     url: '/signin',
-    //     method: 'get',
-    //     controller: signin
-    // },
+    
+    // 注册
+    {
+        url: '/signup',
+        method: 'get',
+        controller: signup
+    },
+    // 登录
+    {
+        url: '/signin',
+        method: 'get',
+        controller: signin
+    },
     // // 提问
     // {
     //     url: '/push',
@@ -72,9 +72,9 @@ module.exports = [
     //     controller: article
     // },
     // 通用404
-    // {
-    //     url: '*',
-    //     method: 'get',
-    //     controller: missed
-    // }
+    {
+        url: '*',
+        method: 'get',
+        controller: missed
+    }
 ]
