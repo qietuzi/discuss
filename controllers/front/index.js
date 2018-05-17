@@ -1,10 +1,6 @@
-const Header = require('../common/header')
 const Article = require('../../models/article')
 
-const util = require('../../utils/utils')
-
 module.exports = async (ctx,next)=>{
-    // var header = await Header(ctx);
 
     var newArticles = await Article.findAll({
         order: [['createdAt', 'DESC']],
