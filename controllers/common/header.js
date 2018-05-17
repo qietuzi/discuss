@@ -1,6 +1,6 @@
 const path = require('path')
 const config = require(path.normalize('../../config'))
-const Menu = require(path.normalize('../../models/menu'))
+// const Menu = require(path.normalize('../../models/menu'))
 const store = require(path.normalize('../../services/store'))
 const Category = require(path.normalize('../../models/category'))
 
@@ -28,25 +28,25 @@ var header = async(ctx)=>{
     var menus;
     var category;
     if(store){
-        menus = await store.getItem('menus');
+        // menus = await store.getItem('menus');
         category = await store.getItem('category');
-        if(!menus){
-            menus = await Menu.findAll();
-            await store.setItem('menus', menus);
-        }
+        // if(!menus){
+        //     menus = await Menu.findAll();
+        //     await store.setItem('menus', menus);
+        // }
         if(!category){
             category = await Category.findAll();
-            await store.setItem('category', category);
+            // await store.setItem('category', category);
         }
     }else{
-        menus = await Menu.findAll();
+        // menus = await Menu.findAll();
         category = await Category.findAll();
     }
-    menus = menuFormat(menus);
+    // menus = menuFormat(menus);
 
     return {
         title: 'Love Coding',
-        menus,
+        // menus,
         category,
         user: ctx.session.signed ? ctx.session.userinfo : null,
     }

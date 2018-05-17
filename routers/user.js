@@ -16,9 +16,14 @@ module.exports = [
         controller: user.index
     },
     {
+        url: '/index',
+        method: 'get',
+        controller: user.index
+    },
+    {
         url: '/index.html',
         method: 'get',
-        controller: index
+        controller: user.index
     },
     // 注册
     {

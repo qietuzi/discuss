@@ -1,5 +1,5 @@
-const Article = require('../../models/article')
-const util = require('../../utils/utils')
+const Article = require('../models/article')
+const util = require('../utils/utils')
 
 module.exports = {
     index: async (ctx,next)=>{

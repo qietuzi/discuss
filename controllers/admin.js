@@ -205,7 +205,7 @@ module.exports = {
     },
     // 禁用、删除管理员
     async adminOption(ctx, next){
-        var data;
+        // var data;
         
 
 

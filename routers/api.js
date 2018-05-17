@@ -7,7 +7,7 @@ const admin = require(path.normalize('../controllers/admin'))
 // const article = require(path.normalize('../controllers/api/article'))
 
 
-const menu = require(path.normalize('../controllers/admin/menu'))
+// const menu = require(path.normalize('../controllers/admin/menu'))
 const validcode = require(path.normalize('../controllers/api/validcode'))
 // const uploadImg = require(path.normalize('../controllers/api/uploadImg'))
 
@@ -48,11 +48,11 @@ module.exports = [
     },
     // 菜单管理
     //      创建菜单
-    {
-        url: '/api/menu/createMenu',
-        method: 'post',
-        controller: menu.createMenu
-    },
+    // {
+    //     url: '/api/menu/createMenu',
+    //     method: 'post',
+    //     controller: menu.createMenu
+    // },
     //      编辑菜单
     //      禁用、删除菜单
 
